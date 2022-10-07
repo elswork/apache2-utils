@@ -21,12 +21,13 @@ Provides some add-on programs useful for any web server. These include:
 
 ## Details
 
-- [GitHub](https://github.com/elswork/apache2-utils)
-- [Deft.Work my personal blog](https://deft.work)
+| Website | GitHub | Docker Hub |
+| --- | --- | --- |
+| [Deft.Work my personal blog](https://deft.work) | [apache2-utils](https://github.com/elswork/apache2-utils) | [apache2-utils](https://hub.docker.com/r/elswork/apache2-utils) |
 
-| Docker Hub | Docker Pulls | Docker Stars | Size/Layers |
+| Docker Pulls | Docker Stars | Size | Sponsors |
 | --- | --- | --- | --- |
-| [apache2-utils](https://hub.docker.com/r/elswork/apache2-utils "elswork/apache2-utils on Docker Hub") | [![](https://img.shields.io/docker/pulls/elswork/apache2-utils.svg)](https://hub.docker.com/r/elswork/apache2-utils "apache2-utils on Docker Hub") | [![](https://img.shields.io/docker/stars/elswork/apache2-utils.svg)](https://hub.docker.com/r/elswork/apache2-utils "apache2-utils on Docker Hub") | [![](https://images.microbadger.com/badges/image/elswork/apache2-utils.svg)](https://microbadger.com/images/elswork/apache2-utils "apache2-utils on microbadger.com") |
+| [![Docker pulls](https://img.shields.io/docker/pulls/elswork/apache2-utils.svg)](https://hub.docker.com/r/elswork/apache2-utils "apache2-utils on Docker Hub") | [![Docker stars](https://img.shields.io/docker/stars/elswork/apache2-utils.svg)](https://hub.docker.com/r/elswork/apache2-utils "apache2-utils on Docker Hub") | [![Docker Image size](https://img.shields.io/docker/image-size/elswork/apache2-utils)](https://hub.docker.com/r/elswork/apache2-utils "apache2-utils on Docker Hub") | [![GitHub Sponsors](https://img.shields.io/github/sponsors/elswork)](https://github.com/sponsors/elswork "Sponsor me!") |
 
 ## Build Instructions
 Build for amd64, armv7l or arm64 architecture (thanks to its [Multi-Arch](https://blog.docker.com/2017/11/multi-arch-all-the-things/) base image)
@@ -67,3 +68,7 @@ make bench ab SITE=https://www.theworldsworstwebsiteever.com/
 
 
 **[Sponsor me!](https://github.com/sponsors/elswork) Together we will be unstoppable.**
+
+Other ways to fund me:
+
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/elswork)](https://github.com/sponsors/elswork) [![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?business=LFKA5YRJAFYR6&no_recurring=0&item_name=Open+Source+Donation&currency_code=EUR)

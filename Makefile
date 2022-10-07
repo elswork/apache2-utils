@@ -1,26 +1,17 @@
 SNAME ?= apache2-utils
-NAME ?= elswork/$(SNAME)
+RNAME ?= elswork/$(SNAME)
 VER ?= `cat VERSION`
-BASE ?= latest
-BASENAME ?= alpine:$(BASE)
+BASENAME ?= alpine:latest
 SITE ?= https://www.theworldsworstwebsiteever.com/
-ARCH2 ?= armv7l
-ARCH3 ?= aarch64
-GOARCH := $(shell uname -m)
-ifeq ($(GOARCH),x86_64)
-	GOARCH := amd64
-	ARCHITECTURE := 64bit
-endif
-ifeq ($(GOARCH),aarch64)
-	ARCHITECTURE := ARM64
-endif
-ifeq ($(GOARCH),armv7l)
-	ARCHITECTURE := ARM
-endif
+PARAM ?= someparameter
+TARGET_PLATFORM ?= linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
+NO_CACHE ?= 
+# NO_CACHE ?= --no-cache
+# linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6
 
 # HELP
 # This will output the help for each task
-# thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+
 .PHONY: help
 
 help: ## This help.
@@ -29,38 +20,46 @@ help: ## This help.
 .DEFAULT_GOAL := help
 
 # DOCKER TASKS
-# Build the container
 
-debug: ## Build the container
-	docker build -t $(NAME):$(GOARCH) \
+# Build image
+
+debug: ## Debug the container
+	docker build -t $(RNAME):debug \
 	--build-arg BASEIMAGE=$(BASENAME) \
-	--build-arg VERSION=$(SNAME)_$(GOARCH)_$(VER) .
+	--build-arg VERSION=$(VER) .
 build: ## Build the container
 	mkdir -p builds
-	docker build --no-cache -t $(NAME):$(GOARCH) \
+	docker build $(NO_CACHE) -t $(RNAME):$(VER) -t $(RNAME):latest \
 	--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
 	--build-arg VCS_REF=`git rev-parse --short HEAD` \
 	--build-arg BASEIMAGE=$(BASENAME) \
-	--build-arg VERSION=$(GOARCH)_$(VER) \
-	. > builds/$(SNAME)_$(GOARCH)_$(VER)_`date +"%Y%m%d_%H%M%S"`.txt
-tag: ## Tag the container
-	docker tag $(NAME):$(GOARCH) $(NAME):$(GOARCH)_$(VER)
-push: ## Push the container
-	docker push $(NAME):$(GOARCH)_$(VER)
-	docker push $(NAME):$(GOARCH)	
-deploy: build tag push
-manifest: ## Create an push manifest
-	docker manifest create $(NAME):$(VER) \
-	$(NAME):$(GOARCH)_$(VER) \
-	$(NAME):$(ARCH2)_$(VER) \
-	$(NAME):$(ARCH3)_$(VER)
-	docker manifest push --purge $(NAME):$(VER)
-	docker manifest create $(NAME):latest $(NAME):$(GOARCH) \
-	$(NAME):$(ARCH2) \
-	$(NAME):$(ARCH3)
-	docker manifest push --purge $(NAME):latest
-console: 
-	docker run -it --rm --entrypoint "/bin/ash" $(NAME):$(GOARCH)
-bench: ## Start wrt benchmark
-	docker run --rm $(NAME):$(GOARCH) \
-	ab $(SITE)
+	--build-arg VERSION=$(VER) \
+	. > builds/$(VER)_`date +"%Y%m%d_%H%M%S"`.txt
+bootstrap: ## Start multicompiler
+	docker buildx inspect --bootstrap
+debugx: ## Buildx in Debug mode
+	docker buildx build \
+	--platform ${TARGET_PLATFORM} \
+	-t $(RNAME):debug --pull \
+	--build-arg BASEIMAGE=$(BASENAME) \
+	--build-arg VERSION=$(VER) .
+buildx: ## Buildx the container
+	docker buildx build $(NO_CACHE) \
+	--platform ${TARGET_PLATFORM} \
+	-t $(RNAME):$(VER) -t $(RNAME):latest --pull --push \
+	-t ghcr.io/$(RNAME):$(VER) -t ghcr.io/$(RNAME):latest \
+	--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+	--build-arg VCS_REF=`git rev-parse --short HEAD` \
+	--build-arg BASEIMAGE=$(BASENAME) \
+	--build-arg VERSION=$(VER) .
+
+# Operations
+
+console: ## Start console in container
+	docker run -it --rm --entrypoint "/bin/ash" $(RNAME):$(VER)
+debugconsole: ## Start a debug console in container
+	docker run -it --rm --entrypoint "/bin/ash" $(RNAME):debug
+start: ## Start an container command
+	docker run --rm $(RNAME):$(VER) $(PARAM)
+bench: ## Start ab benchmark
+	docker run --rm $(NAME):$(VER) ab $(SITE)
