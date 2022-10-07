@@ -46,7 +46,7 @@ ab https://www.theworldsworstwebsiteever.com/
 ```
 or
 ```bash
-make bench ab SITE=https://www.theworldsworstwebsiteever.com/
+make bench SITE=https://www.theworldsworstwebsiteever.com/
 ```
 
 **OPTIONALLY** you can use these parameters before site URL:

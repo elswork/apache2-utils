@@ -62,4 +62,4 @@ debugconsole: ## Start a debug console in container
 start: ## Start an container command
 	docker run --rm $(RNAME):$(VER) $(PARAM)
 bench: ## Start ab benchmark
-	docker run --rm $(NAME):$(VER) ab $(SITE)
+	docker run --rm $(RNAME):$(VER) ab $(SITE)
